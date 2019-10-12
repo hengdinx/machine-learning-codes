@@ -26,27 +26,41 @@ class unstruct_file:
     def get_labels(self, filename):
         with open(filename, 'rb') as f:
             magic, size = struct.unpack(">2I", f.read(8))
-            self.labels=[]
+            self.labels=array('B')
             cur_row = f.read(1)
             while cur_row:
                 image_data = array("B", cur_row)
-                self.labels.append(image_data)
+                self.labels.append(image_data[0])
                 cur_row = f.read(1)
 
 train_images = unstruct_file("train-images-idx3-ubyte", "image")
 test_images = unstruct_file("t10k-images-idx3-ubyte", "image")
 train_labels = unstruct_file("train-labels-idx1-ubyte", "label")
 test_labels = unstruct_file("t10k-labels-idx1-ubyte", "label")
-for i in range(71):
-    print(train_labels.labels[i])
+#for i in range(71):
+#    print(train_labels.labels[i])
 for i,img in enumerate(train_images.images):
-    if i < 72:
-        plt.subplot(9,8,i+1)
+    if i < 60000:
+        #plt.subplot(9,8,i+1)
         img = np.array(img)
         img = img.reshape((28,28))
         img = Image.fromarray(np.uint8(img))
-        plt.imshow(img,cmap='gray')
-        plt.axis("off")
+        img_name = './train_images/'+str(train_labels.labels[i])+"_"+str(i)+'.jpg'
+        img.save(img_name, 'jpeg')
+        #plt.imshow(img,cmap='gray')
+        #plt.axis("off")
     else:
         break
-plt.show()
+for i,img in enumerate(test_images.images):
+    if i < 10000:
+        #plt.subplot(9,8,i+1)
+        img = np.array(img)
+        img = img.reshape((28,28))
+        img = Image.fromarray(np.uint8(img))
+        img_name = './test_images/'+str(train_labels.labels[i])+"_"+str(i)+'.jpg'
+        img.save(img_name, 'jpeg')
+        #plt.imshow(img,cmap='gray')
+        #plt.axis("off")
+    else:
+        break
+#plt.show()
